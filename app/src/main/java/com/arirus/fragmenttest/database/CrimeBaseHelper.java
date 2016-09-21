@@ -29,6 +29,14 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
             CrimeTable.Cols.SOLVED  +
             ")"
         );
+        //创建的时候会打印出数据库语句
+        System.out.println("create table " + CrimeTable.NAME + "(" +
+                " _id integer primary key autoincrement, " +
+                CrimeTable.Cols.UUID + ", " +
+                CrimeTable.Cols.TITLE + ", " +
+                CrimeTable.Cols.DATE + ", " +
+                CrimeTable.Cols.SOLVED  +
+                ")");
     }
 
     @Override

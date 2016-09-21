@@ -34,6 +34,8 @@ public class CrimeLab {
         mDatabase = new CrimeBaseHelper(mContext).getWritableDatabase();
     }
 
+
+    //获取所有的记录
     public List<Crime> getCrimes() {
         List<Crime> crimes = new ArrayList<>();
         CrimeCursorWrapper cursor = queryCrimes(null,null);
@@ -51,7 +53,7 @@ public class CrimeLab {
 
         return crimes;
     }
-
+    //获取某一条的记录
     public Crime getCrime(UUID id) {
         CrimeCursorWrapper cursor = queryCrimes(CrimeTable.Cols.UUID + " = ?",
                                                 new String[]{ id.toString() });
@@ -59,15 +61,23 @@ public class CrimeLab {
         try {
             if (cursor.getCount() == 0)
                 return null;
-
-            cursor.moveToFirst();
-            return cursor.getCrime();
+            /**
+             * Move the cursor to the first row.
+             *
+             * <p>This method will return false if the cursor is empty.
+             *
+             * @return whether the move succeeded.
+             */
+            if (cursor.moveToFirst())
+                return cursor.getCrime();
+            else
+                return null;
         }finally {
             cursor.close();
         }
     }
 
-    private static ContentValues getContentValues(Crime crime)      //k-y 储存类 只用于sqlite数据
+    private static ContentValues getContentValues(Crime crime)      //k-y 储存类 只用于sqlite数据,用于写入数据,只是相当于一个中间数据
     {
         ContentValues values = new ContentValues();
         values.put(CrimeTable.Cols.UUID, crime.getId().toString());
@@ -78,14 +88,22 @@ public class CrimeLab {
         return values;
     }
 
+
+    //数据库写入数据
     public void addCrime(Crime c)
     {
-//        mCrimes.add(c);
         ContentValues values = getContentValues(c);
 
         mDatabase.insert(CrimeTable.NAME, null, values);
     }
 
+    //查询数据
+    //    * @param whereClause A filter declaring which rows to return, formatted as an
+    //    *            SQL WHERE clause (excluding the WHERE itself). Passing null
+    //    *            will return all rows for the given table.
+    //    * @param whereArgs You may include ?s in whereClause, which will be
+    //    *         replaced by the values from selectionArgs, in order that they
+    //    *         appear in the selection. The values will be bound as Strings.
     private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs)
     {
         Cursor cursor = mDatabase.query(CrimeTable.NAME,
@@ -98,16 +116,22 @@ public class CrimeLab {
         return new CrimeCursorWrapper(cursor);
     }
 
+
+    //数据库更新数据
     public void updateCrime(Crime c)
     {
         String uuidString = c.getId().toString();
         ContentValues values = getContentValues(c);
 
-        mDatabase.update(CrimeTable.NAME, values, CrimeTable.Cols.UUID + " = ?", new String[] {uuidString});
+        int num = mDatabase.update(CrimeTable.NAME, values, CrimeTable.Cols.UUID + " = ?", new String[] {uuidString});
+        //如果第三个参数不写会是啥样的??所有行都会改变!!
+        System.out.println("啦啦啦啦" + String.valueOf(num));
     }
 
     public void removeCrime(Crime c)
     {
-        ContentValues values = getContentValues(c);
+        // ContentValues values = getContentValues(c); 这么是更新或者添加数据用的
+        String uuidString = c.getId().toString();
+        mDatabase.delete(CrimeTable.NAME,CrimeTable.Cols.UUID + " = ?", new String[] {uuidString});
     }
 }
