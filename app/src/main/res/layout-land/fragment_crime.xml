@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TITLE"
+        style="?android:listSeparatorTextViewStyle"
+        android:id="@+id/title"/>
+
+    <EditText
+        android:ems="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/crime_title"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="enter a title" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DETAIL"
+        style="?android:listSeparatorTextViewStyle"
+        android:id="@+id/detail"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2016 07 25 19:89"
+            android:id="@+id/button"
+            android:layout_weight="1"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="solved"
+            android:id="@+id/checkBox"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

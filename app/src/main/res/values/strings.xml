@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FragmentTest</string>
+    <string name="new_crime">New Crieme</string>
+    <string name="show_subtitle">Show Subtitle</string>
+    <string name="hide_subtitle">Hide Subtitle</string>
+    <string name="subtitle_format">%1$s crimes</string>
+    <string name="del_crime">Delete Crime</string>
+</resources>
