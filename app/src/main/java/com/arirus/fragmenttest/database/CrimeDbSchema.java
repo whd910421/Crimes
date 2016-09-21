@@ -15,3 +15,6 @@ public class CrimeDbSchema {
         }
     }
 }
+
+
+//定义数据库的表结构,全都是静态常量

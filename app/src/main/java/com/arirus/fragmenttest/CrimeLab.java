@@ -18,9 +18,8 @@ import java.util.UUID;
  */
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
-//    private List<Crime> mCrimes;
     private Context mContext;
-    private SQLiteDatabase mDatabase;
+    private SQLiteDatabase mDatabase; //原mCrimes不需要了,每次都是从dataBase中读取
 
     public static CrimeLab get(Context context)
     {
@@ -33,11 +32,9 @@ public class CrimeLab {
     {
         mContext = context.getApplicationContext();
         mDatabase = new CrimeBaseHelper(mContext).getWritableDatabase();
-//        mCrimes = new ArrayList<>();
     }
 
     public List<Crime> getCrimes() {
-//        return mCrimes;
         List<Crime> crimes = new ArrayList<>();
         CrimeCursorWrapper cursor = queryCrimes(null,null);
 
@@ -70,7 +67,7 @@ public class CrimeLab {
         }
     }
 
-    private static ContentValues getContentValues(Crime crime)
+    private static ContentValues getContentValues(Crime crime)      //k-y 储存类 只用于sqlite数据
     {
         ContentValues values = new ContentValues();
         values.put(CrimeTable.Cols.UUID, crime.getId().toString());
