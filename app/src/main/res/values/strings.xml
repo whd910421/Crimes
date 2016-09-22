@@ -7,4 +7,13 @@
     <string name="del_crime">Delete Crime</string>
     <string name="button_open_app">CHOOSE SUSPECT</string>
     <string name="button_send_msg">SEND CRIME REPORT</string>
+    <string name="crime_report">%1$s!
+        The Crime was discovered on %2$s. %3$s, and %4$s
+    </string>
+    <string name="crime_report_solved">The Case is solved</string>
+    <string name="crime_report_unsolved">The Case is not solved</string>
+    <string name="crime_report_no_suspect">there is no suspect</string>
+    <string name="crime_report_suspect">The suspect is %s</string>
+    <string name="crime_report_subject">The App has report</string>
+    <string name="send_report">Send Crime report via</string>
 </resources>

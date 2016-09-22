@@ -20,6 +20,16 @@ public class Crime {
     private Date mDate;
     private boolean mSolved;
 
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect(String suspect) {
+        mSuspect = suspect;
+    }
+
+    private String mSuspect;
+
     public Date getDate() {
         return mDate;
     }
@@ -43,10 +53,6 @@ public class Crime {
     public Crime()
     {
         this(UUID.randomUUID());
-//        mId = UUID.randomUUID();
-//        mDate = new Date();
-//
-//        mTitle = "";
     }
 
     public Crime(UUID id)
