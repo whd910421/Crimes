@@ -5,4 +5,6 @@
     <string name="hide_subtitle">Hide Subtitle</string>
     <string name="subtitle_format">%1$s crimes</string>
     <string name="del_crime">Delete Crime</string>
+    <string name="button_open_app">CHOOSE SUSPECT</string>
+    <string name="button_send_msg">SEND CRIME REPORT</string>
 </resources>
