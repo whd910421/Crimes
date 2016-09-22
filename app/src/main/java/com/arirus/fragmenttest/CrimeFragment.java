@@ -26,11 +26,13 @@ import java.util.UUID;
 /**
  * Created by whd910421 on 16/7/21.
  */
-public class CrimeFragment extends Fragment {
+public class CrimeFragment extends Fragment implements View.OnClickListener {
     private  Crime mCrime;
     private EditText mTitleField;
     private Button mDataButton;
     private CheckBox mSolvedCheckBox;
+    private Button mReportButton;
+
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
@@ -50,6 +52,7 @@ public class CrimeFragment extends Fragment {
         setHasOptionsMenu(true);
         UUID crimeid = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getContext()).getCrime(crimeid);
+        System.out.println("onCreate走了一次"+crimeid.toString());
     }
 
     @Override
@@ -57,6 +60,7 @@ public class CrimeFragment extends Fragment {
         super.onPause();
 
         CrimeLab.get(getActivity()).updateCrime(mCrime);
+        System.out.println("onPause走了一次"+mCrime.getId().toString());
     }
 
     @Override
@@ -88,6 +92,28 @@ public class CrimeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.button :
+                FragmentManager fragmentManager = getFragmentManager();
+                DataPickerFragement dialog = DataPickerFragement.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(CrimeFragment.this,REQUEST_DATE);
+                dialog.show(fragmentManager,DIALOG_DATE);
+                break;
+            case R.id.button_send_msg :
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                startActivity(i);
+                break;
+            default:
+                return;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -95,15 +121,7 @@ public class CrimeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_crime,container,false);
         mDataButton = (Button)v.findViewById(R.id.button);
         updateDate();
-        mDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getFragmentManager();
-                DataPickerFragement dialog = DataPickerFragement.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this,REQUEST_DATE);
-                dialog.show(fragmentManager,DIALOG_DATE);
-            }
-        });
+        mDataButton.setOnClickListener(this);
 
         mSolvedCheckBox = (CheckBox)v.findViewById(R.id.checkBox);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
@@ -133,6 +151,9 @@ public class CrimeFragment extends Fragment {
 
             }
         });
+
+        mReportButton = (Button) v.findViewById(R.id.button_send_msg);
+        mReportButton.setOnClickListener(this);
         return v;
     }
 
@@ -169,4 +190,6 @@ public class CrimeFragment extends Fragment {
 
         return  report;
     }
+
+
 }

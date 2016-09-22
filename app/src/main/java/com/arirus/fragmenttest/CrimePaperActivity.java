@@ -52,6 +52,7 @@ public class CrimePaperActivity extends AppCompatActivity{
             @Override
             public Fragment getItem(int position) {
                 Crime crime = mCrimes.get(position);
+                System.out.println("打开位置为"+String.valueOf(position));
                 return CrimeFragment.newInstance(crime.getId());
             }
 
