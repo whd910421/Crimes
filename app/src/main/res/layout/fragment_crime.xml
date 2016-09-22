@@ -36,12 +36,13 @@
         android:id="@+id/button"/>
 
     <CheckBox
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="solved"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:id="@+id/checkBox"/>
+        android:id="@+id/checkBox"
+        android:layout_gravity="center_horizontal"/>
 
     <Button
         android:layout_width="match_parent"

@@ -2,7 +2,11 @@ package com.arirus.fragmenttest;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,11 +35,14 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
     private EditText mTitleField;
     private Button mDataButton;
     private CheckBox mSolvedCheckBox;
+    private Button mSuspectButton;
     private Button mReportButton;
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_CONTACT = 1;
+    final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
     public static CrimeFragment newInstance(UUID crimeId) {
 
         Bundle args = new Bundle();
@@ -90,6 +97,29 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
             mCrime.setDate(date);
             updateDate();
         }
+        else if (requestCode == REQUEST_CONTACT)
+        {
+            Uri contacturi = data.getData();
+            String[] queryFiles = new String[]{
+                ContactsContract.Contacts.DISPLAY_NAME
+            };
+
+            Cursor c = getActivity().getContentResolver().query(contacturi,queryFiles,null,null,null);
+
+            try
+            {
+                if(c.getCount() == 0)
+                    return;
+
+                c.moveToFirst();
+                String suspect = c.getString(0); //0 对应了queryFiles里面的第1个参数
+                mCrime.setSuspect(suspect);
+                mSuspectButton.setText(suspect);
+            }
+            finally {
+                c.close();
+            }
+        }
     }
 
     @Override
@@ -107,7 +137,11 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
                 i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                i = Intent.createChooser(i, getString(R.string.send_report)); //创建应用选择窗口
                 startActivity(i);
+                break;
+            case R.id.button_open_app :
+                startActivityForResult(pickContact,REQUEST_CONTACT);
                 break;
             default:
                 return;
@@ -154,6 +188,19 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
         mReportButton = (Button) v.findViewById(R.id.button_send_msg);
         mReportButton.setOnClickListener(this);
+
+        mSuspectButton = (Button) v.findViewById(R.id.button_open_app);
+        mSuspectButton.setOnClickListener(this);
+
+        if (mCrime.getSuspect()!=null) mSuspectButton.setText(mCrime.getSuspect());
+
+
+        //如果没有合适的打开应用,则不显示按钮
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY ) == null)
+        {
+            mSuspectButton.setEnabled(false);
+        }
         return v;
     }
 
