@@ -1,6 +1,7 @@
 package com.arirus.fragmenttest;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -38,6 +39,8 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
     private CheckBox mSolvedCheckBox;
     private Button mSuspectButton;
     private Button mReportButton;
+    private Button mCallButton;
+    private String mSuspectID;
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
@@ -102,7 +105,8 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         {
             Uri contacturi = data.getData();
             String[] queryFiles = new String[]{
-                ContactsContract.Contacts.DISPLAY_NAME
+                ContactsContract.Contacts.DISPLAY_NAME,
+                ContactsContract.Contacts._ID
             };
 
             Cursor c = getActivity().getContentResolver().query(contacturi,queryFiles,null,null,null);
@@ -114,6 +118,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
                 c.moveToFirst();
                 String suspect = c.getString(0); //0 对应了queryFiles里面的第1个参数
+                mSuspectID = c.getString(1);
                 mCrime.setSuspect(suspect);
                 mSuspectButton.setText(suspect);
             }
@@ -147,6 +152,25 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
             case R.id.button_open_app :
                 startActivityForResult(pickContact,REQUEST_CONTACT);
                 break;
+            case R.id.button_call:
+                 String phoneNumber = null;
+                 ContentResolver contentResolver = getActivity().getContentResolver();
+                 Cursor cursor = contentResolver.query(android.provider.ContactsContract.Contacts.CONTENT_URI,
+                                 null, null, null, null);
+                 while(cursor.moveToNext())
+                 {
+                     Cursor phoneCursor = contentResolver.query(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                     null, android.provider.ContactsContract.CommonDataKinds.Phone.CONTACT_ID+"="+mSuspectID, null, null);
+                     while(phoneCursor.moveToNext()) {
+                             phoneNumber = phoneCursor.getString(
+                                             phoneCursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                         }
+                     System.out.print("电话号码"+mSuspectID+phoneNumber);
+                     phoneCursor.close();
+                }
+                cursor.close();
+
             default:
                 return;
         }
@@ -205,6 +229,10 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         {
             mSuspectButton.setEnabled(false);
         }
+
+        mCallButton = (Button) v.findViewById(R.id.button_call);
+        mCallButton.setOnClickListener(this);
+
         return v;
     }
 
