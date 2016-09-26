@@ -20,6 +20,16 @@ public class Crime {
     private Date mDate;
     private boolean mSolved;
 
+    public long getContactID() {
+        return mContactID;
+    }
+
+    public void setContactID(long contactID) {
+        mContactID = contactID;
+    }
+
+    private long mContactID;
+
     public String getSuspect() {
         return mSuspect;
     }
