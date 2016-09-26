@@ -31,6 +31,7 @@ public class CrimeLab {
     private CrimeLab(Context context)
     {
         mContext = context.getApplicationContext();
+        //创建或者获取一个DataBase
         mDatabase = new CrimeBaseHelper(mContext).getWritableDatabase();
     }
 
@@ -100,6 +101,10 @@ public class CrimeLab {
     }
 
     //查询数据
+    //    * @param uri The URI, using the content:// scheme, for the content to
+    //    *         retrieve.
+    //    * @param projection A list of which columns to return.(列) Passing null will
+    //    *         return all columns, which is inefficient.
     //    * @param whereClause A filter declaring which rows to return, formatted as an
     //    *            SQL WHERE clause (excluding the WHERE itself). Passing null
     //    *            will return all rows for the given table.
