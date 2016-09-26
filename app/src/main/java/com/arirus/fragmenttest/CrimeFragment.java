@@ -127,8 +127,10 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
                 c.moveToFirst();
                 String suspect = c.getString(0); //0 对应了queryFiles里面的第1个参数
-                mSuspectID = c.getString(1);
+                long id = c.getLong(1);
                 mCrime.setSuspect(suspect);
+                mCrime.setContactID(id);
+
                 mSuspectButton.setText(suspect);
             }
             finally {
@@ -193,23 +195,33 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
     private void ShowTel()
     {
-        String phoneNumber = null;
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-        while(cursor.moveToFirst())
-        {
-            Cursor phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID+"="+mSuspectID, null, null);
-            while(phoneCursor.moveToNext()) {
-                phoneNumber = phoneCursor.getString(
-                        phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        Uri contentUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String selectClause = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
 
+        String[] fields = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+        String[] selectParams = {Long.toString(mCrime.getContactID())};
+
+        Cursor cursor = getActivity().getContentResolver().query(contentUri, fields, selectClause, selectParams, null);
+
+        if(cursor != null && cursor.getCount() > 0)
+        {
+            try
+            {
+                cursor.moveToFirst();
+
+                String number = cursor.getString(0);
+
+                Uri phoneNumber = Uri.parse("tel:" + number);
+
+                Intent intent = new Intent(Intent.ACTION_DIAL, phoneNumber);
+
+                startActivity(intent);
             }
-            System.out.println("电话号码"+mSuspectID+phoneNumber);
-            phoneCursor.close();
+            finally
+            {
+                cursor.close();
+            }
         }
-        cursor.close();
     }
 
     @Nullable
