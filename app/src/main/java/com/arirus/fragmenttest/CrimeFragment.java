@@ -48,7 +48,6 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
     private Button mSuspectButton;
     private Button mReportButton;
     private Button mCallButton;
-    private String mSuspectID;
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
@@ -114,8 +113,8 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         {
             Uri contacturi = data.getData();
             String[] queryFiles = new String[]{
-                ContactsContract.Contacts.DISPLAY_NAME,
-                ContactsContract.Contacts._ID
+                    ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts._ID
             };
 
             Cursor c = getActivity().getContentResolver().query(contacturi,queryFiles,null,null,null);
@@ -127,9 +126,12 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
                 c.moveToFirst();
                 String suspect = c.getString(0); //0 对应了queryFiles里面的第1个参数
-                mSuspectID = c.getString(1);
+                long id = c.getLong(1);
                 mCrime.setSuspect(suspect);
+                mCrime.setContactID(id);
+
                 mSuspectButton.setText(suspect);
+                UpdateDailBtn();
             }
             finally {
                 c.close();
@@ -154,7 +156,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 //                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
 //                i = Intent.createChooser(i, getString(R.string.send_report)); //创建应用选择窗口
                 Intent i = ShareCompat.IntentBuilder.from(getActivity()).setSubject(getString(R.string.crime_report_subject))
-                                                        .setType("text/plain").setText(getCrimeReport()).getIntent();
+                        .setType("text/plain").setText(getCrimeReport()).getIntent();
 
                 startActivity(i);
                 break;
@@ -167,7 +169,15 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.button_call:
-                 ShowTel();
+//                if ( mSuspectID == null ) return;
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+//                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+//                    //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+//                } else {
+                ShowTel();
+//                }
+
+
             default:
                 return;
         }
@@ -183,25 +193,43 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private void UpdateDailBtn()
+    {
+        if (mCrime.getContactID()!=0)
+            mCallButton.setEnabled(true);
+        else
+            mCallButton.setEnabled(false);
+    }
+
     private void ShowTel()
     {
-        String phoneNumber = null;
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-        while(cursor.moveToFirst())
-        {
-            Cursor phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID+"="+mSuspectID, null, null);
-            while(phoneCursor.moveToNext()) {
-                phoneNumber = phoneCursor.getString(
-                        phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        Uri contentUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String selectClause = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?";
 
+        String[] fields = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+        String[] selectParams = {Long.toString(mCrime.getContactID())};
+
+        Cursor cursor = getActivity().getContentResolver().query(contentUri, fields, selectClause, selectParams, null);
+
+        if(cursor != null && cursor.getCount() > 0)
+        {
+            try
+            {
+                cursor.moveToFirst();
+
+                String number = cursor.getString(0);
+
+                Uri phoneNumber = Uri.parse("tel:" + number);
+
+                Intent intent = new Intent(Intent.ACTION_DIAL, phoneNumber);
+
+                startActivity(intent);
             }
-            System.out.println("电话号码"+mSuspectID+phoneNumber);
-            phoneCursor.close();
+            finally
+            {
+                cursor.close();
+            }
         }
-        cursor.close();
     }
 
     @Nullable
@@ -247,7 +275,6 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
         mSuspectButton = (Button) v.findViewById(R.id.button_open_app);
         mSuspectButton.setOnClickListener(this);
-
         if (mCrime.getSuspect()!=null) mSuspectButton.setText(mCrime.getSuspect());
 
 
@@ -260,6 +287,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
         mCallButton = (Button) v.findViewById(R.id.button_call);
         mCallButton.setOnClickListener(this);
+        UpdateDailBtn();
 
         return v;
     }
