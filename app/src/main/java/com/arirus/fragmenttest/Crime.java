@@ -38,6 +38,10 @@ public class Crime {
         mSuspect = suspect;
     }
 
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
+    }
+
     private String mSuspect;
 
     public Date getDate() {

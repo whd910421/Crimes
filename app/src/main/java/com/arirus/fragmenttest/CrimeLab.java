@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.arirus.fragmenttest.database.CrimeBaseHelper;
 import com.arirus.fragmenttest.database.CrimeCursorWrapper;
 import com.arirus.fragmenttest.database.CrimeDbSchema.CrimeTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -140,5 +142,13 @@ public class CrimeLab {
         // ContentValues values = getContentValues(c); 这么是更新或者添加数据用的
         String uuidString = c.getId().toString();
         mDatabase.delete(CrimeTable.NAME,CrimeTable.Cols.UUID + " = ?", new String[] {uuidString});
+    }
+
+    //定位图片文件
+    public File getPhotoFile(Crime crime) {
+        File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (externalFilesDir == null) return null;
+        return new File(externalFilesDir, crime.getPhotoFilename());
     }
 }

@@ -31,8 +31,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -42,19 +45,25 @@ import java.util.UUID;
  */
 public class CrimeFragment extends Fragment implements View.OnClickListener {
     private  Crime mCrime;
+    private File mPhotoFiles;
     private EditText mTitleField;
     private Button mDataButton;
     private CheckBox mSolvedCheckBox;
     private Button mSuspectButton;
     private Button mReportButton;
     private Button mCallButton;
+    private ImageButton mPhotoButton;
+    private ImageView mPhotoView;
+
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
+    private static final int REQUEST_PHOTO = 3;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+
     public static CrimeFragment newInstance(UUID crimeId) {
 
         Bundle args = new Bundle();
@@ -71,6 +80,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         setHasOptionsMenu(true);
         UUID crimeid = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getContext()).getCrime(crimeid);
+        mPhotoFiles = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
         System.out.println("onCreate走了一次"+crimeid.toString());
     }
 
@@ -175,8 +185,10 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 //                    //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
 //                } else {
                 ShowTel();
+                break;
 //                }
-
+            case R.id.crime_camera:
+                break;
 
             default:
                 return;
@@ -288,6 +300,10 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         mCallButton = (Button) v.findViewById(R.id.button_call);
         mCallButton.setOnClickListener(this);
         UpdateDailBtn();
+
+        mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
+        mPhotoButton.setOnClickListener(this);
+        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
 
         return v;
     }
