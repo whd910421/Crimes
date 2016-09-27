@@ -16,4 +16,9 @@ public class CrimeListActivity extends SingleFragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_twopane;
+    }
 }
