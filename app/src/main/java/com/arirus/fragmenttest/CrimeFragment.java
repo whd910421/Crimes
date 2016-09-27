@@ -6,10 +6,12 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -35,6 +37,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.arirus.fragmenttest.Utils.PictureUtils;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -58,12 +62,13 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String DIALOG_PHOTO = "DialogPHOTO";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
     private static final int REQUEST_PHOTO = 3;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-
+    final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     public static CrimeFragment newInstance(UUID crimeId) {
 
         Bundle args = new Bundle();
@@ -146,6 +151,8 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
             finally {
                 c.close();
             }
+        } else if (requestCode == REQUEST_PHOTO) {
+            updatePhotoView();
         }
     }
 
@@ -188,8 +195,12 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
                 break;
 //                }
             case R.id.crime_camera:
+                startActivityForResult(captureImage, REQUEST_PHOTO);
                 break;
-
+            case R.id.crime_photo:
+                DetailPhotoFragement photoView = DetailPhotoFragement.newInstance(mCrime.getId());
+                photoView.show(getFragmentManager(), DIALOG_PHOTO);
+                break;
             default:
                 return;
         }
@@ -302,14 +313,33 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         UpdateDailBtn();
 
         mPhotoButton = (ImageButton) v.findViewById(R.id.crime_camera);
+        //有文件名,并且有相机应用
+        boolean canTakePhoto = (mPhotoFiles != null && captureImage.resolveActivity(packageManager) != null);
+        mPhotoButton.setEnabled(canTakePhoto);
+        if (canTakePhoto) {
+            Uri uri = Uri.fromFile(mPhotoFiles);
+            //将文件放置在外部存储,并设置其"定位"
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
         mPhotoButton.setOnClickListener(this);
-        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
 
+        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+        mPhotoView.setOnClickListener(this);
+        updatePhotoView();
         return v;
     }
 
     private void updateDate() {
         mDataButton.setText(mCrime.getDate().toString());
+    }
+
+    private void updatePhotoView() {
+        if (mPhotoButton == null || !mPhotoFiles.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFiles.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
     }
 
     private String getCrimeReport()

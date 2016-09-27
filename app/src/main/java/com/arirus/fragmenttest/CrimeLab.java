@@ -149,6 +149,12 @@ public class CrimeLab {
         File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         if (externalFilesDir == null) return null;
+        //File(文件路径, 文件名字)
         return new File(externalFilesDir, crime.getPhotoFilename());
+    }
+
+    public File getPhotoFile(UUID crime_id) {
+        Crime crime = getCrime(crime_id);
+        return getPhotoFile(crime);
     }
 }
