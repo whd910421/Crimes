@@ -40,7 +40,7 @@ public class CrimePaperActivity extends AppCompatActivity implements CrimeFragme
 
     @Override
     public void onCrimeUpdated(Crime crime) {
-
+        //这个里面啥也不干,因为主要是针对twopane类型的layout的Activity,所以对于paperActivty并不需要监听其托管的Fragment的变换
     }
 
     @Override

@@ -40,6 +40,7 @@ public class CrimeListActivity extends SingleFragmentActivity
 
     }
 
+    //对于只是手机上来说 CrimeFragment.Callbacks 并没有什么用,这个主要是针对平板
     @Override
     public void onCrimeUpdated(Crime crime) {
         CrimeListFragment listFragment = (CrimeListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);

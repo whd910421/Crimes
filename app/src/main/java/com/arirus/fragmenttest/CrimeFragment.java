@@ -110,14 +110,6 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        CrimeLab.get(getActivity()).updateCrime(mCrime);
-        System.out.println("onPause走了一次"+mCrime.getId().toString());
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_instance,menu);
@@ -142,6 +134,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         {
             Date date = (Date) data.getSerializableExtra(DataPickerFragement.EXTRA_DATE);
             mCrime.setDate(date);
+            updateCrime();
             updateDate();
         }
         else if (requestCode == REQUEST_CONTACT)
@@ -164,7 +157,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
                 long id = c.getLong(1);
                 mCrime.setSuspect(suspect);
                 mCrime.setContactID(id);
-
+                updateCrime();
                 mSuspectButton.setText(suspect);
                 UpdateDailBtn();
             }
@@ -173,6 +166,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
             }
         } else if (requestCode == REQUEST_PHOTO) {
             updatePhotoView();
+            updateCrime();
         }
     }
 
@@ -290,6 +284,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 mCrime.setSolved(b);
+                updateCrime();
             }
         });
 
@@ -304,7 +299,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 mCrime.setTitle(charSequence.toString());
-
+                updateCrime();
             }
 
             @Override
@@ -347,6 +342,12 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         mPhotoView.setOnClickListener(this);
         updatePhotoView();
         return v;
+    }
+
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     private void updateDate() {
