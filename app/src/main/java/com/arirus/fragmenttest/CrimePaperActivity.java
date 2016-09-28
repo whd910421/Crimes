@@ -26,13 +26,11 @@ public class CrimePaperActivity extends AppCompatActivity{
     private static final String EXTRA_CRIME_ID = "CrimePaperActivity_crime_id";
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
-    private boolean bShow;
 
-    public static Intent newIntent(Context context, UUID crimeID, boolean bShowSubtitle)
+    public static Intent newIntent(Context context, UUID crimeID)
     {
         Intent intent = new Intent(context,CrimePaperActivity.class);
         intent.putExtra(EXTRA_CRIME_ID,crimeID);
-        intent.putExtra("bShowSubtitle", bShowSubtitle);
         return intent;
     }
 
@@ -41,7 +39,6 @@ public class CrimePaperActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
         UUID crimeID = (UUID)getIntent().getSerializableExtra(EXTRA_CRIME_ID);
-        bShow = (boolean)getIntent().getSerializableExtra("bShowSubtitle");
 
         mViewPager = (ViewPager)findViewById(R.id.activity_crime_paper_view_paper);
         mCrimes = CrimeLab.get(this).getCrimes();

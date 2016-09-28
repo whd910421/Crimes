@@ -53,6 +53,13 @@
             android:layout_weight="1"
             android:id="@+id/button_send_msg"
             android:text="@string/button_send_msg"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/button_call"
+            android:text="Call Him/Her"/>
     </LinearLayout>
 
 

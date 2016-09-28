@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 /**
  * Created by whd910421 on 16/7/26.
  */
-public class CrimeListActivity extends SingleFragmentActivity {
+public class CrimeListActivity extends SingleFragmentActivity implements CrimeListFragment.Callbacks {
     @Override
     protected Fragment createFragment() {
         return new CrimeListFragment();
@@ -19,6 +19,18 @@ public class CrimeListActivity extends SingleFragmentActivity {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.activity_twopane;
+        return R.layout.activity_masterdetail;
+    }
+
+    public void onCrimeSelected(Crime crime) {
+        if (findViewById(R.id.detail_fragment_container) == null) {
+            Intent intent = CrimePaperActivity.newIntent(this, crime.getId());
+            startActivityForResult(intent, 0);
+        } else {
+            Fragment newDetail = CrimeFragment.newInstance(crime.getId());
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.detail_fragment_container, newDetail).commit();
+        }
+
     }
 }

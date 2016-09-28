@@ -1,10 +1,12 @@
 package com.arirus.fragmenttest;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +34,23 @@ public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisivle;
+    private Callbacks mCallbacks;
 
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     @Nullable
     @Override
@@ -100,8 +118,10 @@ public class CrimeListFragment extends Fragment {
             case R.id.menu_item_new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getContext()).addCrime(crime);
-                Intent intent = CrimePaperActivity.newIntent(getActivity(),crime.getId(), mSubtitleVisivle);
-                startActivity(intent);
+//                Intent intent = CrimePaperActivity.newIntent(getActivity(),crime.getId(), mSubtitleVisivle);
+//                startActivity(intent);
+                updateUI();
+                mCallbacks.onCrimeSelected(crime);
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisivle = !mSubtitleVisivle;
@@ -143,8 +163,14 @@ public class CrimeListFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = CrimePaperActivity.newIntent(getActivity(),mCrime.getId(),mSubtitleVisivle);
-                    startActivityForResult(intent,0);
+                    //仅对于单一的一种设备设置启动新的activity
+//                    Intent intent = CrimePaperActivity.newIntent(getActivity(),mCrime.getId());
+//                    startActivityForResult(intent,0);
+                    //对于note,一下这样来启动新的Fragment不具备通用性
+//                    Fragment fragment = CrimeFragment.newInstance(mCrime.getId());
+//                    FragmentManager fm = getActivity().getSupportFragmentManager();
+//                    fm.beginTransaction().replace(R.id.detail_fragment_container,fragment).commit();
+                    mCallbacks.onCrimeSelected(mCrime);
                 }
             });
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title);
@@ -203,4 +229,5 @@ public class CrimeListFragment extends Fragment {
             mCrimes = crimes;
         }
     }
+
 }
