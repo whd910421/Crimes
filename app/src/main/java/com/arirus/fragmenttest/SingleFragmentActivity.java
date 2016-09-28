@@ -11,6 +11,10 @@ import android.view.View;
 /**
  * Created by whd910421 on 16/7/26.
  */
+/*
+* 一个抽象基类
+* */
+
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();

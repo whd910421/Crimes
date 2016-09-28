@@ -47,6 +47,10 @@ import java.util.UUID;
 /**
  * Created by whd910421 on 16/7/21.
  */
+
+/*
+* 一个Crime的详细信息展示Fragment
+* */
 public class CrimeFragment extends Fragment implements View.OnClickListener {
     private  Crime mCrime;
     private File mPhotoFiles;
@@ -58,7 +62,7 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
     private Button mCallButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
-
+    private Callbacks mCallbacks;
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
@@ -77,6 +81,22 @@ public class CrimeFragment extends Fragment implements View.OnClickListener {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     @Override

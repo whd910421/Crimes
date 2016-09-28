@@ -6,6 +6,9 @@ import java.util.UUID;
 /**
  * Created by whd910421 on 16/7/21.
  */
+/*
+* Crime的定义类,包含Crime所有接口
+* */
 public class Crime {
     public String getTitle() {
         return mTitle;

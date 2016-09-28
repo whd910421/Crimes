@@ -21,7 +21,7 @@ import java.util.UUID;
 /**
  * Created by whd910421 on 16/7/29.
  */
-public class CrimePaperActivity extends AppCompatActivity{
+public class CrimePaperActivity extends AppCompatActivity implements CrimeFragment.Callbacks {
 
     private static final String EXTRA_CRIME_ID = "CrimePaperActivity_crime_id";
     private ViewPager mViewPager;
@@ -32,6 +32,11 @@ public class CrimePaperActivity extends AppCompatActivity{
         Intent intent = new Intent(context,CrimePaperActivity.class);
         intent.putExtra(EXTRA_CRIME_ID,crimeID);
         return intent;
+    }
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+
     }
 
     @Override
