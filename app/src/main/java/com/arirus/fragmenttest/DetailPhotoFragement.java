@@ -1,6 +1,5 @@
 package com.arirus.fragmenttest;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -15,8 +14,6 @@ import android.widget.ImageView;
 import com.arirus.fragmenttest.Utils.PictureUtils;
 
 import java.io.File;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.UUID;
 
 /**

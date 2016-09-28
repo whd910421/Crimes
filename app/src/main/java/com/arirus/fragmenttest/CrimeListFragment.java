@@ -25,6 +25,10 @@ import java.util.List;
 /**
  * Created by whd910421 on 16/7/26.
  */
+
+/*
+* Crime列表的Fragment
+* */
 public class CrimeListFragment extends Fragment {
 
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";

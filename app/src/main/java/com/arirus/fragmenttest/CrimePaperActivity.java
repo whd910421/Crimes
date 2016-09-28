@@ -21,6 +21,10 @@ import java.util.UUID;
 /**
  * Created by whd910421 on 16/7/29.
  */
+
+/*
+* CrimeFragmnet的托管Activity
+* */
 public class CrimePaperActivity extends AppCompatActivity implements CrimeFragment.Callbacks {
 
     private static final String EXTRA_CRIME_ID = "CrimePaperActivity_crime_id";

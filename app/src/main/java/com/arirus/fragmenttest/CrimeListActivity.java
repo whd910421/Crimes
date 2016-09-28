@@ -6,6 +6,10 @@ import android.support.v4.app.Fragment;
 /**
  * Created by whd910421 on 16/7/26.
  */
+
+/*
+* Crime列表Activity
+* */
 public class CrimeListActivity extends SingleFragmentActivity
         implements CrimeListFragment.Callbacks,
         CrimeFragment.Callbacks {
