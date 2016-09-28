@@ -20,6 +20,7 @@ import java.util.UUID;
  * Created by whd910421 on 16/9/27.
  */
 
+
 public class DetailPhotoFragement extends DialogFragment {
     private ImageView mImageView;
     private static final String ARG_CRIME_ID = "crime_id";
